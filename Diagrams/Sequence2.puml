@@ -1,0 +1,32 @@
+@startuml
+autonumber
+actor Admin
+boundary "Console / Main Menu" as Menu
+control "Bank System" as Bank
+entity "SavingsAccount" as NewAccount
+database "FileManager" as FM
+
+Admin -> Menu: Select Option 1 (Add Record)
+Menu -> Admin: Prompt for details (ID, Name, Deposit, MinBal)
+Admin -> Menu: Inputs account data
+Menu -> Bank: addAccount(data)
+
+activate Bank
+Bank -> Bank: check capacity & resize if needed
+Bank -> NewAccount: new SavingsAccount(...)
+activate NewAccount
+NewAccount --> Bank: instance pointer
+deactivate NewAccount
+
+Bank -> Bank: store in accounts[count++]
+
+Bank -> FM: saveToFile(accounts, count)
+activate FM
+FM --> Bank: write success
+deactivate FM
+
+Bank --> Menu: return success
+deactivate Bank
+
+Menu --> Admin: Display "Account created and saved successfully"
+@enduml

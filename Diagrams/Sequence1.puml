@@ -1,0 +1,37 @@
+@startuml
+autonumber
+actor User
+boundary "Console / Main Menu" as Menu
+control "Bank System" as Bank
+entity "SavingsAccount" as Account
+database "FileManager" as FM
+
+User -> Menu: Select Option 6 (Main Transaction: Withdraw)
+Menu -> User: Prompt Account Number & Amount
+User -> Menu: Enters "ACC101", 500.00
+Menu -> Bank: executeTransaction("ACC101", "WITHDRAW", 500.00)
+
+Bank -> Bank: searchAccount("ACC101")
+activate Bank
+Bank --> Bank: return Account Pointer
+deactivate Bank
+
+alt Account Found
+    Bank -> Account: withdraw(500.00)
+    activate Account
+    Account -> Account: validateBalance(minBalance)
+    Account --> Bank: success (true)
+    deactivate Account
+    
+    Bank -> FM: saveToFile(accounts, count)
+    activate FM
+    FM --> Bank: persistence confirmed
+    deactivate FM
+    
+    Bank --> Menu: Transaction Successful
+    Menu --> User: Display updated balance
+else Account Not Found
+    Bank --> Menu: Error: Account does not exist
+    Menu --> User: Display failure message
+end
+@enduml

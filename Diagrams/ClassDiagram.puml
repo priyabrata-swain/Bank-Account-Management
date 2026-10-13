@@ -1,0 +1,79 @@
+@startuml
+class Customer {
+    - id: string
+    - name: string
+    - phone: string
+    + Customer()
+    + Customer(id: string, name: string, phone: string)
+    + getId(): string
+    + getName(): string
+    + displayCustomer(): void
+}
+
+class Transaction {
+    - transactionId: string
+    - type: string
+    - amount: double
+    - date: string
+    + Transaction()
+    + Transaction(tId: string, type: string, amt: double, date: string)
+    + displayTransaction(): void
+}
+
+abstract class Account {
+    # accountNumber: string
+    # balance: double
+    # holder: Customer
+    + Account()
+    + Account(accNo: string, holder: Customer, balance: double)
+    + virtual ~Account()
+    + getAccountNumber(): string
+    + getBalance(): double
+    + deposit(amount: double): void
+    + {abstract} withdraw(amount: double): bool
+    + {abstract} display(): void
+}
+
+class SavingsAccount {
+    - interestRate: double
+    - minBalance: double
+    + SavingsAccount()
+    + SavingsAccount(accNo: string, holder: Customer, balance: double, rate: double, minBal: double)
+    + ~SavingsAccount()
+    + withdraw(amount: double): bool
+    + calculateInterest(): double
+    + display(): void
+}
+
+class FileManager {
+    - filePath: string
+    + FileManager(path: string)
+    + saveToFile(accounts: Account**, count: int): bool
+    + loadFromFile(accounts: Account*&, count: int&, capacity: int&): bool
+}
+
+class Bank {
+    - accounts: Account**
+    - capacity: int
+    - count: int
+    - fileManager: FileManager
+    - resize(): void
+    + Bank(initialCapacity: int)
+    + ~Bank()
+    + addAccount(acc: Account*): void
+    + displayAll(): void
+    + searchAccount(accNo: string): Account*
+    + updateAccount(accNo: string): bool
+    + deleteAccount(accNo: string): bool
+    + executeTransaction(accNo: string, type: string, amount: double): bool
+    + generateReport(): void
+    + saveRecords(): void
+    + loadRecords(): void
+}
+
+Account <|-- SavingsAccount : Inheritance
+Account *-- Customer : Composition
+Account "1" o-- "many" Transaction : Aggregation
+Bank o-- Account : Dynamic Array (Manages)
+Bank --> FileManager : Uses
+@enduml
